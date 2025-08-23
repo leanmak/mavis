@@ -1,6 +1,6 @@
 # mavis
 
-`mavis` (or **ma**ze-**vis**ualizer) is a maze and pathfinding algorithm visualization TUI app built with Rust 🦀!
+`mavis` (or <ins>**ma**</ins>ze-<ins>**vis**</ins>ualizer) is a maze and pathfinding algorithm visualization TUI app built with Rust 🦀!
 
 ## TODO
 For now, I'll implement some basic maze generation and pathfinding algorithms, here's what's left:
