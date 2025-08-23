@@ -1,13 +1,15 @@
 use ratatui::{
     layout::{ Constraint, Layout, Rect },
-    style::{ Color, Style },
+    style::{ Color, Style, Stylize },
     symbols::border,
     text::{ Line, Span, Text },
-    widgets::{ Block, Paragraph },
+    widgets::{ Block, List, Paragraph },
     Frame,
 };
 
-pub fn draw(frame: &mut Frame) {
+use crate::app::App;
+
+pub fn draw(app: &mut App, frame: &mut Frame) {
     let app_layout = Layout::vertical([
         Constraint::Percentage(10),
         Constraint::Percentage(2),
@@ -16,7 +18,7 @@ pub fn draw(frame: &mut Frame) {
     let [header_area, _, main_area] = app_layout.areas(frame.area());
 
     draw_header(frame, header_area);
-    draw_main_area(frame, main_area);
+    draw_main_area(app, frame, main_area);
 }
 
 fn draw_header(frame: &mut Frame, header_area: Rect) {
@@ -35,7 +37,7 @@ fn draw_header(frame: &mut Frame, header_area: Rect) {
     });
 }
 
-fn draw_main_area(frame: &mut Frame, main_area: Rect) {
+fn draw_main_area(app: &mut App, frame: &mut Frame, main_area: Rect) {
     let main_area_layout = Layout::horizontal([
         Constraint::Percentage(70),
         Constraint::Percentage(3),
@@ -43,7 +45,7 @@ fn draw_main_area(frame: &mut Frame, main_area: Rect) {
     ]);
     let [grid, _, sidebar_area] = main_area_layout.areas(main_area);
 
-    draw_sidebar(frame, sidebar_area);
+    draw_sidebar(app, frame, sidebar_area);
     draw_grid(frame, grid);
 }
 
@@ -60,7 +62,7 @@ fn draw_grid(frame: &mut Frame, grid: Rect) {
     });
 }
 
-fn draw_sidebar(frame: &mut Frame, sidebar_area: Rect) {
+fn draw_sidebar(app: &mut App, frame: &mut Frame, sidebar_area: Rect) {
     let sidebar_area_container = Layout::vertical([
         Constraint::Percentage(10),
         Constraint::Percentage(70),
@@ -74,21 +76,36 @@ fn draw_sidebar(frame: &mut Frame, sidebar_area: Rect) {
                 Line::from(Span::styled("[O] Increase Speed", Style::default().fg(Color::White))),
                 Line::from(Span::styled("[P] Decrease Speed", Style::default().fg(Color::White))),
                 Line::from(Span::styled("[Space] Resume/Pause", Style::default().fg(Color::White))),
-                Line::from(Span::styled("[R] Reset/Stop Algorithm", Style::default().fg(Color::White))),
+                Line::from(
+                    Span::styled("[R] Reset/Stop Algorithm", Style::default().fg(Color::White))
+                ),
                 Line::from(Span::styled("[Q] Quit Application", Style::default().fg(Color::White)))
             ]
         )
     );
     frame.render_widget(sidebar_description_text, sidebar_description);
 
-    let sidebar_border = Block::bordered().title(" What would you like to do? ").border_set(border::THICK);
+    let options = List::new(
+        app.sidebar.page
+            .options()
+            .iter()
+            .map(|o| o.title)
+    )
+        .block(Block::bordered().title(" What would you like to do? "))
+        .highlight_style(Style::new().reversed())
+        .highlight_symbol(">> ")
+        .repeat_highlight_symbol(true);
 
-    frame.render_widget(sidebar_border, Rect {
-        x: sidebar.left(),
-        y: sidebar.top(),
-        width: sidebar.width,
-        height: sidebar.height,
-    });
+    frame.render_stateful_widget(
+        options,
+        Rect {
+            x: sidebar.left(),
+            y: sidebar.top(),
+            width: sidebar.width,
+            height: sidebar.height,
+        },
+        &mut app.sidebar.state
+    );
 }
 
 fn mavis_title() -> Vec<Line<'static>> {

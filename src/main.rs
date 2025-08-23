@@ -5,6 +5,7 @@ use crate::{app::App, event::{loop_key_events, Event}};
 mod app;
 mod ui;
 mod event;
+mod sidebar;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

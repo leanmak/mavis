@@ -26,5 +26,11 @@ pub fn loop_key_events(tx: Sender<Event>) -> io::Result<()> {
 pub fn handle_key_press(app: &mut App, key: KeyCode) {
     if key == KeyCode::Char('q') {
         app.exit = true;
+    } else if key == KeyCode::Up {
+        app.sidebar.prev();
+    } else if key == KeyCode::Down {
+        app.sidebar.next();
+    } else if key == KeyCode::Enter {
+        app.sidebar.select();
     }
 }
