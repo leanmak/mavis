@@ -1,0 +1,29 @@
+use std::{io, sync::mpsc::Receiver};
+
+use ratatui::DefaultTerminal;
+
+use crate::{event::{handle_key_press, Event}, ui::draw};
+
+pub struct App {
+    pub exit: bool,
+}
+
+impl App {
+    pub fn new() -> Self {
+        Self {
+            exit: false,
+        }
+    }
+
+    pub fn run(&mut self, terminal: &mut DefaultTerminal, rx: Receiver<Event>) -> io::Result<()> {
+        while !self.exit {
+            terminal.draw(|frame| draw(frame))?;
+
+            match rx.recv().map_err(|e| io::Error::new(io::ErrorKind::Other, e))? {
+                Event::KeyPress(key_code) => handle_key_press(self, key_code),
+            };
+        }
+
+        Ok(())
+    }
+}
