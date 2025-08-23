@@ -6,6 +6,8 @@ mod app;
 mod ui;
 mod event;
 mod sidebar;
+mod algorithm;
+mod grid;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

@@ -31,6 +31,6 @@ pub fn handle_key_press(app: &mut App, key: KeyCode) {
     } else if key == KeyCode::Down {
         app.sidebar.next();
     } else if key == KeyCode::Enter {
-        app.sidebar.select();
+        app.sidebar.select(&mut app.grid);
     }
 }

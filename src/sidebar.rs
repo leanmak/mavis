@@ -1,5 +1,7 @@
 use ratatui::widgets::ListState;
 
+use crate::{algorithm::{maze::noise_map::{self, NoiseMap}, Algorithm}, app::App, grid::Grid};
+
 pub struct Sidebar {
     pub page: SidebarPage,
     pub state: ListState,
@@ -40,12 +42,19 @@ impl Sidebar {
         }
     }
 
-    pub fn select(&mut self) {
+    pub fn select(&mut self, grid: &mut Grid) {
         if let Some(o) = self.state.selected() && let Some(action) = &self.page.options()[o].action {
             match action {
                 SidebarAction::SwitchPage(page) => {
                     self.state.select(Some(0));
                     self.page = page.clone();
+                },
+                SidebarAction::InitAlgorithm(algorithm) => {
+                    self.page = SidebarPage::Main;
+                    self.state.select(Some(0));
+
+                    // TODO: find a way to make this work with traits (on this day, Rust's borrow checker has beaten me in the most violent way.)
+                    grid.state = crate::grid::GridState::Generating(Box::new(NoiseMap::new(8)));
                 }
             }
         } else {
@@ -73,7 +82,7 @@ impl SidebarPage {
                 vec![
                     SidebarOption::new("Recursive Backtracking", None),
                     SidebarOption::new("Prim's", None),
-                    SidebarOption::new("Noise Map", None),
+                    SidebarOption::new("Noise Map", Some(SidebarAction::InitAlgorithm(Box::new(NoiseMap::new(25))))),
                     SidebarOption::new("Back", Some(SidebarAction::SwitchPage(SidebarPage::Main)))
                 ],
             SidebarPage::PathfindingAlgorithms =>
@@ -103,4 +112,5 @@ impl SidebarOption {
 
 enum SidebarAction {
     SwitchPage(SidebarPage),
+    InitAlgorithm(Box<dyn Algorithm>)
 }

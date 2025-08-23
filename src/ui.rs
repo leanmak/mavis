@@ -7,7 +7,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::App;
+use crate::{app::App, grid::{Node, NodeType}};
 
 pub fn draw(app: &mut App, frame: &mut Frame) {
     let app_layout = Layout::vertical([
@@ -46,11 +46,18 @@ fn draw_main_area(app: &mut App, frame: &mut Frame, main_area: Rect) {
     let [grid, _, sidebar_area] = main_area_layout.areas(main_area);
 
     draw_sidebar(app, frame, sidebar_area);
-    draw_grid(frame, grid);
+    draw_grid(app, frame, grid);
 }
 
-fn draw_grid(frame: &mut Frame, grid: Rect) {
-    //let (map_width, map_height) = (grid.width - 2, grid.height - 2);
+fn draw_grid(app: &mut App, frame: &mut Frame, grid: Rect) {
+    let (map_width, map_height) = (grid.width - 2, grid.height - 2);
+
+    // generate new grid on resize
+    if app.grid.width() != map_width as usize || app.grid.height() != map_height as usize {
+        app.grid.content = (0..map_height).map(|_| {
+            (0..map_width).map(|_| Node { node_type: NodeType::Empty }).collect()
+        }).collect();
+    }
 
     let border = Block::bordered().title(" Main Grid ").border_set(border::THICK);
 
@@ -59,6 +66,19 @@ fn draw_grid(frame: &mut Frame, grid: Rect) {
         y: grid.top(),
         width: grid.width,
         height: grid.height,
+    });
+
+    // draw nodes on screen
+    let content: Vec<Line> = app.grid.content.iter().map(|grid_row| {
+        let nodes: Vec<Span> = grid_row.iter().map(|n| n.node_type.to_span()).collect();
+        Line::from(nodes)
+    }).collect();
+
+    frame.render_widget(Paragraph::new(Text::from(content)), Rect {
+        x: grid.left() + 1,
+        y: grid.top() + 1,
+        width: map_width,
+        height: map_height,
     });
 }
 
