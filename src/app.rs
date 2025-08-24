@@ -23,8 +23,8 @@ impl App {
         while !self.exit {
             terminal.draw(|frame| draw(self, frame))?;
 
-            if let GridState::Generating(ref mut b_algorithm) = self.grid.state {
-                if b_algorithm.step(&mut self.grid.content) == AlgorithmResult::Done {
+            if let GridState::Generating(b_algorithm) = &mut self.grid.state {
+                if b_algorithm.borrow_mut().step(&mut self.grid.content) == AlgorithmResult::Done {
                     self.grid.state = GridState::Idle;
                 }
             } else {

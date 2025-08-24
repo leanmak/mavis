@@ -1,10 +1,12 @@
+use std::{cell::RefCell, rc::Rc};
+
 use ratatui::{style::{Color, Style}, text::Span};
 
 use crate::algorithm::Algorithm;
 
 pub enum GridState {
     Idle,
-    Generating(Box<dyn Algorithm>)
+    Generating(Rc<RefCell<dyn Algorithm>>)
 }
 
 pub enum NodeType {
