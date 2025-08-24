@@ -59,7 +59,7 @@ fn draw_grid(app: &mut App, frame: &mut Frame, grid: Rect) {
         }).collect();
     }
 
-    let border = Block::bordered().title(" Main Grid ").border_set(border::THICK);
+    let border = Block::bordered().title(format!(" Main Grid ({} x {})", map_width, map_height)).border_set(border::THICK);
 
     frame.render_widget(border, Rect {
         x: grid.left(),

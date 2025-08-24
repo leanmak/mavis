@@ -31,7 +31,7 @@ impl Algorithm for NoiseMap {
         }
 
         if self.next.0 == width-1 && self.next.1 == height-1 {
-            AlgorithmResult::Done
+            AlgorithmResult::Done(None)
         } else {
             let x: i32;
             let y: i32;

@@ -2,7 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use ratatui::widgets::ListState;
 
-use crate::{algorithm::{maze::noise_map::NoiseMap, Algorithm}, grid::{Grid, GridState}};
+use crate::{algorithm::{maze::noise_map::NoiseMap, pathfinding::a_star::AStar, Algorithm}, grid::{Grid, GridState}};
 
 pub struct Sidebar {
     pub page: SidebarPage,
@@ -83,12 +83,12 @@ impl SidebarPage {
                 vec![
                     SidebarOption::new("Recursive Backtracking", None),
                     SidebarOption::new("Prim's", None),
-                    SidebarOption::new("Noise Map", Some(SidebarAction::InitAlgorithm(Rc::new(RefCell::new(NoiseMap::new(25)))))),
+                    SidebarOption::new("Noise Map", Some(SidebarAction::InitAlgorithm(Rc::new(RefCell::new(NoiseMap::new(10)))))),
                     SidebarOption::new("Back", Some(SidebarAction::SwitchPage(SidebarPage::Main)))
                 ],
             SidebarPage::PathfindingAlgorithms =>
                 vec![
-                    SidebarOption::new("A*", None),
+                    SidebarOption::new("A*", Some(SidebarAction::InitAlgorithm(Rc::new(RefCell::new(AStar::new((0, 0), (106, 37))))))),
                     SidebarOption::new("BFS", None),
                     SidebarOption::new("Dijkstra's", None),
                     SidebarOption::new("Back", Some(SidebarAction::SwitchPage(SidebarPage::Main)))

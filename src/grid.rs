@@ -9,6 +9,7 @@ pub enum GridState {
     Generating(Rc<RefCell<dyn Algorithm>>)
 }
 
+#[derive(PartialEq)]
 pub enum NodeType {
     Empty,
     Wall,
@@ -17,12 +18,12 @@ pub enum NodeType {
 }
 
 impl NodeType {
-    pub fn to_span(&self) -> Span {
+    pub fn to_span(&self) -> Span<'_> {
         match self {
             Self::Empty => Span::styled(" ", Style::default().fg(Color::White)),
             Self::Wall => Span::styled("█", Style::default().fg(Color::White)),
-            Self::Visited => Span::styled("&", Style::default().fg(Color::DarkGray)),
-            Self::Path => Span::styled(".", Style::default().fg(Color::LightGreen)),
+            Self::Visited => Span::styled(".", Style::default().fg(Color::DarkGray)),
+            Self::Path => Span::styled("@", Style::default().fg(Color::LightGreen)),
         }
     }
 }

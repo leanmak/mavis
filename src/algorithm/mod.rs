@@ -1,13 +1,14 @@
 use crate::grid::Node;
 
 pub mod maze;
+pub mod pathfinding;
 
 pub type Coord = (i32, i32); // (x, y)
 
 #[derive(PartialEq)]
 pub enum AlgorithmResult {
     ModifiedGrid,
-    Done,
+    Done(Option<Vec<Coord>>), // possible path can be returned
     Impossible
 }
 
