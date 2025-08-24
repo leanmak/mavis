@@ -3,14 +3,16 @@ use rand::prelude::*;
 
 pub struct NoiseMap {
     next: Coord,
-    fill_percentage: i32
+    fill_percentage: i32,
+    rng: ThreadRng,
 }
 
 impl NoiseMap {
     pub fn new(f: i32) -> Self {
         Self {
             next: (0, 0),
-            fill_percentage: f
+            fill_percentage: f,
+            rng: rand::rng()
         }
     }
 }
@@ -20,10 +22,9 @@ impl Algorithm for NoiseMap {
         let height = grid.len() as i32;
         let width = grid[0].len() as i32;
 
-        let mut rng = rand::rng();
         let node = &mut grid[self.next.1 as usize][self.next.0 as usize];
 
-        if rng.random_range(0..=100) <= self.fill_percentage {
+        if self.rng.random_range(0..=100) <= self.fill_percentage {
             node.node_type = NodeType::Wall;
         } else {
             node.node_type = NodeType::Empty;
