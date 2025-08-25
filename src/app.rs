@@ -2,7 +2,7 @@ use std::{io, sync::mpsc::Receiver};
 
 use ratatui::DefaultTerminal;
 
-use crate::{algorithm::AlgorithmResult, event::{handle_key_press, Event}, grid::{Grid, GridState, Node, NodeType}, sidebar::Sidebar, ui::draw};
+use crate::{algorithm::{AlgorithmResult, AlgorithmType}, event::{handle_key_press, Event}, grid::{Grid, GridState, Node, NodeType}, sidebar::Sidebar, ui::draw};
 
 pub struct App {
     pub exit: bool,
@@ -23,6 +23,12 @@ impl App {
         let mut tick = 0;
         while !self.exit {
             if let GridState::Generating(b_algorithm) = &mut self.grid.state {    
+                // somehow increasing the tick difference makes the entire thing go faster.
+                let tick_diff = match b_algorithm.borrow().algorithm_type() {
+                    AlgorithmType::MazeGeneration => 50,
+                    AlgorithmType::Pathfinding => 15
+                };
+                
                 let curr_step = b_algorithm.borrow_mut().step(&mut self.grid.content);
                 if matches!(curr_step, AlgorithmResult::Done(_)) || matches!(curr_step, AlgorithmResult::Impossible) {
                     self.grid.state = GridState::Idle;
@@ -36,7 +42,7 @@ impl App {
                     }
                 }
 
-                if tick % 5 == 0 {
+                if tick % tick_diff == 0 {
                     terminal.draw(|frame| draw(self, frame))?;
                 }
                 tick += 1;

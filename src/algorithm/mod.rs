@@ -12,6 +12,12 @@ pub enum AlgorithmResult {
     Impossible
 }
 
+pub enum AlgorithmType {
+    MazeGeneration,
+    Pathfinding,
+}
+
 pub trait Algorithm {
     fn step(&mut self, grid: &mut Vec<Vec<Node>>) -> AlgorithmResult;
+    fn algorithm_type(&self) -> AlgorithmType;
 }

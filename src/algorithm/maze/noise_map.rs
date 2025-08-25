@@ -1,4 +1,4 @@
-use crate::{algorithm::{Algorithm, AlgorithmResult, Coord}, grid::{Node, NodeType}};
+use crate::{algorithm::{Algorithm, AlgorithmResult, AlgorithmType, Coord}, grid::{Node, NodeType}};
 use rand::prelude::*;
 
 pub struct NoiseMap {
@@ -47,5 +47,9 @@ impl Algorithm for NoiseMap {
             self.next = (x, y);
             AlgorithmResult::ModifiedGrid
         }
+    }
+
+    fn algorithm_type(&self) -> AlgorithmType {
+        AlgorithmType::MazeGeneration
     }
 }

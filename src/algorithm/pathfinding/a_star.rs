@@ -1,5 +1,5 @@
 use std::{ collections::{ BinaryHeap, HashMap }, i32 };
-use crate::{algorithm::{Algorithm, AlgorithmResult, Coord}, grid::{Node, NodeType}};
+use crate::{algorithm::{Algorithm, AlgorithmResult, AlgorithmType, Coord}, grid::{Node, NodeType}};
 
 #[derive(Eq, PartialEq, Clone)]
 pub struct AStarNode {
@@ -127,8 +127,14 @@ impl Algorithm for AStar {
                     self.open_set.push(neighbor_node.clone());
                 }
             }
+
+            return AlgorithmResult::ModifiedGrid;
         }
 
         AlgorithmResult::Impossible
+    }
+
+    fn algorithm_type(&self) -> AlgorithmType {
+        AlgorithmType::Pathfinding
     }
 }
