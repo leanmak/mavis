@@ -32,7 +32,7 @@ impl App {
                     let curr_step = algorithm.borrow_mut().step(&mut self.grid.content);
                     if matches!(curr_step, AlgorithmResult::Done(_)) || matches!(curr_step, AlgorithmResult::Impossible) {
                         self.grid.state = GridState::Idle;
-
+                        
                         if let AlgorithmResult::Done(Some(path)) = curr_step {
                             for coord in path {
                                 self.grid.content[coord.1 as usize][coord.0 as usize] = Node { node_type: NodeType::Path };
@@ -62,6 +62,19 @@ impl App {
 
                     match rx.recv().map_err(|e| io::Error::new(io::ErrorKind::Other, e))? {
                         Event::MousePress(position) => {
+                            let Some(grid_start) = self.grid.grid_start else {
+                                panic!("Grid should be initialized");
+                            };
+
+                            let Some(grid_end) = self.grid.grid_end else {
+                                panic!("Grid should be initialized");
+                            };
+
+                            // out of bounds.
+                            if position.0 < grid_start.0 || position.0 > grid_end.0 || position.1 < grid_start.1 || position.1 > grid_end.1 {
+                                continue;
+                            }
+
                             if self.grid.markers.start == None {
                                 self.grid.markers.start = Some(position);
                             } else {
@@ -69,10 +82,6 @@ impl App {
 
                                 let Some(start) = self.grid.markers.start else {
                                     panic!("Start should be valid");
-                                };
-
-                                let Some(grid_start) = self.grid.grid_start else {
-                                    panic!("Grid should be initialized");
                                 };
 
                                 let new_algo = Rc::clone(algorithm);

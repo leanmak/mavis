@@ -58,7 +58,8 @@ fn draw_grid(app: &mut App, frame: &mut Frame, grid: Rect) {
             (0..map_width).map(|_| Node { node_type: NodeType::Empty }).collect()
         }).collect();
 
-        app.grid.grid_start = Some((grid.x as i32 + 1, grid.y as i32 + 1));
+        app.grid.grid_start = Some((grid.left() as i32 + 1, grid.top() as i32 + 1));
+        app.grid.grid_end = Some((grid.right() as i32 - 1, grid.bottom() as i32 - 1));
     }
 
     let border_title = if let GridState::PlacingMarkers(_) = app.grid.state {
