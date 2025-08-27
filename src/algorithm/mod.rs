@@ -18,6 +18,7 @@ pub enum AlgorithmType {
 }
 
 pub trait Algorithm {
+    fn init(&mut self, start: Coord, end: Coord) { }
     fn step(&mut self, grid: &mut Vec<Vec<Node>>) -> AlgorithmResult;
     fn algorithm_type(&self) -> AlgorithmType;
 }

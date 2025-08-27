@@ -2,11 +2,12 @@ use std::{cell::RefCell, rc::Rc};
 
 use ratatui::{style::{Color, Style}, text::Span};
 
-use crate::algorithm::Algorithm;
+use crate::algorithm::{Algorithm, Coord};
 
 pub enum GridState {
     Idle,
-    Generating(Rc<RefCell<dyn Algorithm>>)
+    Generating(Rc<RefCell<dyn Algorithm>>),
+    PlacingMarkers(Rc<RefCell<dyn Algorithm>>)
 }
 
 #[derive(PartialEq)]
@@ -32,16 +33,36 @@ pub struct Node {
     pub node_type: NodeType
 }
 
+pub struct Markers {
+    pub start: Option<Coord>,
+    pub end: Option<Coord>,
+}
+
+impl Markers {
+    pub fn new() -> Self {
+        Self {
+            start: None,
+            end: None,
+        }
+    }
+}
+
 pub struct Grid {
     pub state: GridState,
-    pub content: Vec<Vec<Node>>
+    pub content: Vec<Vec<Node>>,
+    pub markers: Markers,
+    pub grid_start: Option<Coord>,
+    pub grid_end: Option<Coord>
 }
 
 impl Grid {
     pub fn new() -> Self {
         Self {
             state: GridState::Idle,
-            content: Vec::new()
+            content: Vec::new(),
+            markers: Markers::new(),
+            grid_start: None,
+            grid_end: None,
         }
     }
 

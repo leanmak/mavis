@@ -7,7 +7,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::{app::App, grid::{Node, NodeType}};
+use crate::{app::App, grid::{GridState, Node, NodeType}};
 
 pub fn draw(app: &mut App, frame: &mut Frame) {
     let app_layout = Layout::vertical([
@@ -57,9 +57,21 @@ fn draw_grid(app: &mut App, frame: &mut Frame, grid: Rect) {
         app.grid.content = (0..map_height).map(|_| {
             (0..map_width).map(|_| Node { node_type: NodeType::Empty }).collect()
         }).collect();
+
+        app.grid.grid_start = Some((grid.x as i32 + 1, grid.y as i32 + 1));
     }
 
-    let border = Block::bordered().title(format!(" Main Grid ({} x {})", map_width, map_height)).border_set(border::THICK);
+    let border_title = if let GridState::PlacingMarkers(_) = app.grid.state {
+        if app.grid.markers.start == None {
+            String::from(" Click anywhere on the grid to place the START marker... ")
+        } else {
+            String::from(" Click anywhere on the grid to place the END marker... ")
+        }
+    } else {
+        format!(" Main Grid ({} x {})", map_width, map_height)
+    };
+
+    let border = Block::bordered().title(border_title).border_set(border::THICK);
 
     frame.render_widget(border, Rect {
         x: grid.left(),
@@ -80,6 +92,24 @@ fn draw_grid(app: &mut App, frame: &mut Frame, grid: Rect) {
         width: map_width,
         height: map_height,
     });
+
+    if let Some(position) = app.grid.markers.start {
+        frame.render_widget(Text::from("S"), Rect {
+            x: position.0 as u16,
+            y: position.1 as u16,
+            width: 1,
+            height: 1
+        });
+    }
+
+    if let Some(position) = app.grid.markers.end {
+        frame.render_widget(Text::from("E"), Rect {
+            x: position.0 as u16,
+            y: position.1 as u16,
+            width: 1,
+            height: 1
+        });
+    }
 }
 
 fn draw_sidebar(app: &mut App, frame: &mut Frame, sidebar_area: Rect) {

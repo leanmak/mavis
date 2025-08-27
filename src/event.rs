@@ -1,11 +1,13 @@
 use std::{ io, sync::mpsc::Sender };
 
-use crossterm::event::{ KeyCode, KeyEventKind };
+use crossterm::event::{ KeyCode, KeyEventKind, MouseButton, MouseEventKind };
 
-use crate::app::App;
+use crate::{algorithm::Coord, app::App};
 
 pub enum Event {
     KeyPress(KeyCode),
+    MousePress(Coord),
+    Empty
 }
 
 pub fn loop_key_events(tx: Sender<Event>) -> io::Result<()> {
@@ -15,6 +17,13 @@ pub fn loop_key_events(tx: Sender<Event>) -> io::Result<()> {
                 if key_event.kind == KeyEventKind::Press {
                     tx.send(Event::KeyPress(key_event.code)).expect(
                         "Should be able to send key press event to receiver."
+                    );
+                }
+            },
+            crossterm::event::Event::Mouse(mouse_event) => {
+                if let MouseEventKind::Down(button) = mouse_event.kind && button == MouseButton::Left {
+                    tx.send(Event::MousePress((mouse_event.column as i32, mouse_event.row as i32))).expect(
+                        "Should be able to send mouse press event to receiver."
                     );
                 }
             }

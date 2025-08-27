@@ -48,15 +48,21 @@ impl Sidebar {
         if let Some(o) = self.state.selected() && let Some(action) = &self.page.options()[o].action {
             match action {
                 SidebarAction::SwitchPage(page) => {
-                    self.state.select(Some(0));
                     self.page = page.clone();
+                    self.state.select(Some(0));
                 },
                 SidebarAction::InitAlgorithm(algorithm) => {
                     self.page = SidebarPage::Main;
                     self.state.select(Some(0));
 
                     grid.state = GridState::Generating(Rc::clone(algorithm));
-                }
+                },
+                SidebarAction::InitPlaceMarkers(algorithm) => {
+                    self.page = SidebarPage::Main;
+                    self.state.select(Some(0));
+
+                    grid.state = GridState::PlacingMarkers(Rc::clone(algorithm));
+                },
             }
         } else {
             self.state.select(Some(0));
@@ -88,7 +94,7 @@ impl SidebarPage {
                 ],
             SidebarPage::PathfindingAlgorithms =>
                 vec![
-                    SidebarOption::new("A*", Some(SidebarAction::InitAlgorithm(Rc::new(RefCell::new(AStar::new((0, 0), (106, 37))))))),
+                    SidebarOption::new("A*", Some(SidebarAction::InitPlaceMarkers(Rc::new(RefCell::new(AStar::new()))))), // Some(SidebarAction::InitAlgorithm(Rc::new(RefCell::new(AStar::new((0, 0), (106, 37))))))
                     SidebarOption::new("BFS", None),
                     SidebarOption::new("Dijkstra's", None),
                     SidebarOption::new("Back", Some(SidebarAction::SwitchPage(SidebarPage::Main)))
@@ -113,5 +119,6 @@ impl SidebarOption {
 
 enum SidebarAction {
     SwitchPage(SidebarPage),
-    InitAlgorithm(Rc<RefCell<dyn Algorithm>>)
+    InitAlgorithm(Rc<RefCell<dyn Algorithm>>),
+    InitPlaceMarkers(Rc<RefCell<dyn Algorithm>>),
 }

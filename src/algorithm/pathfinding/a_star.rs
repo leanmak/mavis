@@ -1,4 +1,4 @@
-use std::{ collections::{ BinaryHeap, HashMap }, i32 };
+use std::{ cmp::Ordering, collections::{ BinaryHeap, HashMap }, i32 };
 use crate::{algorithm::{Algorithm, AlgorithmResult, AlgorithmType, Coord}, grid::{Node, NodeType}};
 
 #[derive(Eq, PartialEq, Clone)]
@@ -11,14 +11,15 @@ pub struct AStarNode {
 }
 
 impl Ord for AStarNode {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        // we need a min-heap, not max
+    // compare for smaller f then smaller h
+    fn cmp(&self, other: &Self) -> Ordering {
         other.f.cmp(&self.f)
+             .then_with(|| other.h.cmp(&self.h))
     }
 }
 
 impl PartialOrd for AStarNode {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
@@ -30,26 +31,11 @@ pub struct AStar {
 }
 
 impl AStar {
-    pub fn new(start: Coord, end: Coord) -> Self {
-        let mut open_set: BinaryHeap<AStarNode> = BinaryHeap::new();
-        let mut nodes: HashMap<Coord, AStarNode> = HashMap::new();
-
-        let man_dist = AStar::manhattan_distance(start, end) as i32;
-        let start_node = AStarNode {
-            coordinates: start,
-            g: 0,
-            h: man_dist,
-            f: man_dist,
-            parent: None,
-        };
-
-        open_set.push(start_node.clone());
-        nodes.insert(start, start_node);
-
+    pub fn new() -> Self {
         Self {
-            open_set: open_set,
-            nodes: nodes,
-            end_coordinates: end,
+            open_set: BinaryHeap::new(),
+            nodes: HashMap::new(),
+            end_coordinates: (0, 0),
         }
     }
 
@@ -98,6 +84,21 @@ impl AStar {
 }
 
 impl Algorithm for AStar {
+    fn init(&mut self, start: Coord, end: Coord) {
+        let man_dist = AStar::manhattan_distance(start, end) as i32;
+        let start_node = AStarNode {
+            coordinates: start,
+            g: 0,
+            h: man_dist,
+            f: man_dist,
+            parent: None,
+        };
+
+        self.end_coordinates = end;
+        self.open_set.push(start_node.clone());
+        self.nodes.insert(start, start_node);
+    }
+
     fn step(&mut self, grid: &mut Vec<Vec<Node>>) -> AlgorithmResult {
         if let Some(curr_node) = self.open_set.pop() {
             if curr_node.coordinates == self.end_coordinates {
@@ -110,7 +111,7 @@ impl Algorithm for AStar {
                 let neighbor_node = self.nodes.entry(neighbor).or_insert(AStarNode {
                     coordinates: neighbor,
                     g: i32::MAX,
-                    h: 0,
+                    h: AStar::manhattan_distance(neighbor, self.end_coordinates) as i32,
                     f: i32::MAX,
                     parent: None,
                 });
