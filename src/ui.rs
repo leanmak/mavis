@@ -59,7 +59,7 @@ fn draw_grid(app: &mut App, frame: &mut Frame, grid: Rect) {
         }).collect();
 
         app.grid.grid_start = Some((grid.left() as i32 + 1, grid.top() as i32 + 1));
-        app.grid.grid_end = Some((grid.right() as i32 - 1, grid.bottom() as i32 - 1));
+        app.grid.grid_end = Some((grid.right() as i32 - 2, grid.bottom() as i32 - 2));
     }
 
     let border_title = if let GridState::PlacingMarkers(_) = app.grid.state {

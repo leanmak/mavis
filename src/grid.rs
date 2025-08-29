@@ -52,7 +52,8 @@ pub struct Grid {
     pub content: Vec<Vec<Node>>,
     pub markers: Markers,
     pub grid_start: Option<Coord>,
-    pub grid_end: Option<Coord>
+    pub grid_end: Option<Coord>,
+    pub clear: bool,
 }
 
 impl Grid {
@@ -63,6 +64,7 @@ impl Grid {
             markers: Markers::new(),
             grid_start: None,
             grid_end: None,
+            clear: false
         }
     }
 

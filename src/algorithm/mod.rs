@@ -12,6 +12,7 @@ pub enum AlgorithmResult {
     Impossible
 }
 
+#[derive(PartialEq)]
 pub enum AlgorithmType {
     MazeGeneration,
     Pathfinding,

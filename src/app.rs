@@ -24,6 +24,16 @@ impl App {
         while !self.exit {
             match &mut self.grid.state {
                 GridState::Generating(algorithm) => {
+                    if self.grid.clear && algorithm.borrow().algorithm_type() == AlgorithmType::MazeGeneration {
+                        for row in &mut self.grid.content {
+                            for node in row {
+                                node.node_type = NodeType::Empty;
+                            }
+                        }
+
+                        self.grid.clear = false;
+                    }
+
                     let tick_diff = match algorithm.borrow().algorithm_type() {
                         AlgorithmType::MazeGeneration => 50,
                         AlgorithmType::Pathfinding => 15
@@ -32,7 +42,8 @@ impl App {
                     let curr_step = algorithm.borrow_mut().step(&mut self.grid.content);
                     if matches!(curr_step, AlgorithmResult::Done(_)) || matches!(curr_step, AlgorithmResult::Impossible) {
                         self.grid.state = GridState::Idle;
-                        
+                        self.grid.clear = true;
+
                         if let AlgorithmResult::Done(Some(path)) = curr_step {
                             for coord in path {
                                 self.grid.content[coord.1 as usize][coord.0 as usize] = Node { node_type: NodeType::Path };
@@ -44,6 +55,7 @@ impl App {
                         // clear markers
                         if let Some(_) = self.grid.markers.start {
                             self.grid.markers.start = None;
+                            self.grid.markers.end = None;
                         }
                     }
 
@@ -77,6 +89,15 @@ impl App {
 
                             if self.grid.markers.start == None {
                                 self.grid.markers.start = Some(position);
+
+                                for row in &mut self.grid.content {
+                                    for node in row {
+                                        if node.node_type != NodeType::Wall && node.node_type != NodeType::Empty {
+                                            node.node_type = NodeType::Empty;
+                                        }
+                                    }
+
+                                }
                             } else {
                                 self.grid.markers.end = Some(position);
 
