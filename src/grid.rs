@@ -54,6 +54,7 @@ pub struct Grid {
     pub grid_start: Option<Coord>,
     pub grid_end: Option<Coord>,
     pub clear: bool,
+    pub iter_count: i32,
 }
 
 impl Grid {
@@ -64,7 +65,8 @@ impl Grid {
             markers: Markers::new(),
             grid_start: None,
             grid_end: None,
-            clear: false
+            clear: false,
+            iter_count: 0,
         }
     }
 

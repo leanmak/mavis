@@ -17,22 +17,25 @@ pub fn draw(app: &mut App, frame: &mut Frame) {
     ]);
     let [header_area, _, main_area] = app_layout.areas(frame.area());
 
-    draw_header(frame, header_area);
+    draw_header(frame, header_area, app.grid.iter_count);
     draw_main_area(app, frame, main_area);
 }
 
-fn draw_header(frame: &mut Frame, header_area: Rect) {
+fn draw_header(frame: &mut Frame, header_area: Rect, iter_count: i32) {
     let header_area_layout = Layout::horizontal([
         Constraint::Percentage(50),
         Constraint::Percentage(50),
     ]);
     let [header_left, header_right] = header_area_layout.areas(header_area);
 
+    let iteration_text = format!("Iterations: {}", iter_count);
+    let iteration_text_count = iteration_text.len();
+
     frame.render_widget(Paragraph::new(Text::from(mavis_title())), header_left);
-    frame.render_widget(Paragraph::new("Iteration: 0 | Speed: 0 cells/sec"), Rect {
-        x: header_right.right() - ("Iteration: 0 | Speed: 0 cells/sec".len() as u16) - 1,
+    frame.render_widget(Paragraph::new(iteration_text), Rect {
+        x: header_right.right() - (iteration_text_count as u16) - 1,
         y: header_right.bottom() - 1,
-        width: "Iteration: 0 | Speed: 0 cells/sec".len() as u16,
+        width: iteration_text_count as u16,
         height: 1,
     });
 }

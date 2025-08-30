@@ -31,6 +31,8 @@ impl App {
                             }
                         }
 
+                        // reset vars
+                        self.grid.iter_count = 0;
                         self.grid.clear = false;
                     }
 
@@ -40,6 +42,7 @@ impl App {
                     };
 
                     let curr_step = algorithm.borrow_mut().step(&mut self.grid.content);
+                    self.grid.iter_count += 1;
                     if matches!(curr_step, AlgorithmResult::Done(_)) || matches!(curr_step, AlgorithmResult::Impossible) {
                         self.grid.state = GridState::Idle;
                         self.grid.clear = true;
@@ -96,8 +99,9 @@ impl App {
                                             node.node_type = NodeType::Empty;
                                         }
                                     }
-
                                 }
+
+                                self.grid.iter_count = 0;
                             } else {
                                 self.grid.markers.end = Some(position);
 
