@@ -11,8 +11,8 @@ For now, I'll implement some basic maze generation and pathfinding algorithms, h
 - Implement maze generation algorithms:
     - [ ] Recursive Backtracking
     - [ ] Prim's
-    - [ ] Noise Map *(the only one I actually know how to implement)*<br/>
+    - [X] Noise Map *(the only one I actually know how to implement)*<br/>
 - Implement pathfinding algorithms:
-    - [ ] A*
+    - [X] A*
     - [ ] BFS
     - [ ] Dijkstra's
