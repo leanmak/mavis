@@ -124,8 +124,6 @@ fn draw_sidebar(app: &mut App, frame: &mut Frame, sidebar_area: Rect) {
     let sidebar_description_text = Paragraph::new(
         Text::from(
             vec![
-                Line::from(Span::styled("[O] Increase Speed", Style::default().fg(Color::White))),
-                Line::from(Span::styled("[P] Decrease Speed", Style::default().fg(Color::White))),
                 Line::from(Span::styled("[Space] Resume/Pause", Style::default().fg(Color::White))),
                 Line::from(
                     Span::styled("[R] Reset/Stop Algorithm", Style::default().fg(Color::White))
