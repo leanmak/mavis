@@ -16,3 +16,4 @@ For now, I'll implement some basic maze generation and pathfinding algorithms, h
     - [X] A*
     - [ ] BFS
     - [ ] Dijkstra's
+- Code Cleanup (this project is held together with bad coding practices, hopes, and prayers.)
